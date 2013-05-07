@@ -110,8 +110,14 @@ class App(object):
 
   def Main(self):
     if not len(sys.argv) > 2:
-      print '%s host port' % __file__
-      sys.exit(1)
-    host, port = sys.argv[1], int(sys.argv[2])
+      #print '%s host port' % __file__
+      #sys.exit(1)
+      s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+      s.connect(("8.8.8.8",80))
+      myip = s.getsockname()[0]
+      s.close()
+      host, port = myip, 80 
+    else:
+      host, port = sys.argv[1], int(sys.argv[2])
     print 'http://%s:%d/' % (host, port)
     self.Serve(host, port)
