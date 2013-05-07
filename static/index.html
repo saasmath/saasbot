@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Robot Control</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="http://saasmath.seattleacademy.org/css/bootstrap.css"
+              rel="stylesheet">
+        <style>
+
+        </style>
+        <script src="http://saasmath.seattleacademy.org/js/jquery.js"></script>
+
+        <script>
+
+            function getsensors() {
+                //$('#sensors').load('/sensors');
+                $.getJSON('/sensors', function(data) {
+                    $('#angle').text(data.angle);
+                    $('#temperature').text(data.temperature);
+                    var table_obj = $('#allsensors');
+                    table_obj.text('');
+                    $.each(data, function(index, item) {
+                        table_obj.append($('<tr id="' + item.id + '"><td>' + index + " : " + item + '</td></tr>'));
+                    })
+                });
+            }
+
+            $(document).ready(function() {
+
+                $("button").click(function() {
+                    //alert($(this).data('command'));
+                    //getsensors();
+                    command = $(this).data('command');
+                    $('#result').load(command);
+
+                });
+
+                setInterval(function() {
+                    getsensors();
+                }, 300);
+
+
+            });
+
+        </script>
+
+    </head>
+    <body>
+        <div class="container">
+            <div id="result">result</div>
+            <button data-command="/left">left</button>
+            <button data-command="/reset">reset</button>
+            <button data-command="/right">right</button>
+            <button data-command="/webbytes?bytes=137,0,0,128,0">stop</button>
+            <button data-command="/webbytes?bytes=137,0,8,128,0">forward slow</button>
+            <button data-command="/song">song</button>
+            <button data-command="/sensors">sensors</button>
+
+            <div id="angle">angle</div>
+            <div id="temperature">temperature</div>
+            <div id="allsensors">All sensors</div>
+
+        </div> <!-- /container -->
+    </body>
+</html>

@@ -183,6 +183,9 @@ class Fido(object):
     self.robot.Stop()
     logging.info('Docking timed out.')
 
+  def Rawbytes(self,thebytes=None):
+    self.robot.WriteBytes(list(thebytes))
+
 
 class FidoService(object):
 

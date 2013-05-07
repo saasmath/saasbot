@@ -552,6 +552,10 @@ class Roomba(object):
     time.sleep(0.5)
     self.sci.force_seeking_dock()
 
+  def WriteBytes(self,thebytes=None):
+    """writes a raw list of bytes to the robot"""
+    self.sci.Send(list(thebytes))
+
 
 class CreateSensors(RoombaSensors):
 

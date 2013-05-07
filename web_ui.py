@@ -3,6 +3,7 @@
 # The MIT License
 #
 # Copyright (c) 2007 Damon Kohler
+# Copyright (c) 2013 Gary Anderson
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -41,31 +42,6 @@ import time
 
 FORMAT = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s'
 DATE_FORMAT = '%H%M%S'
-MAX_COMET_QUEUE_SIZE = 50
-
-
-class WebLogStream(object):
-
-  def __init__(self, queues):
-    self.queues = queues
-
-  def open(self, *args, **kwargs):
-    pass
-
-  def read(self, *args, **kwargs):
-    pass
-
-  def write(self, value):
-    for address, queue in self.queues.items():
-      queue.put(('logging', value.strip()))
-      if queue.qsize() > MAX_COMET_QUEUE_SIZE:
-        # We assume the user is no longer listening and remove their queue.
-        del self.queues[address]
-
-  def flush(self):
-    pass
-
-
 
 class FidoWeb(gsd.App):
 
@@ -74,39 +50,14 @@ class FidoWeb(gsd.App):
   def __init__(self, robot_tty='/dev/ttyUSB0'):
     self._fido = fido.Fido(robot_tty)
     self._lock = threading.Lock()
-    self._comet_queues = {}
-    # Set up logging.
-    self.web_log_stream = WebLogStream(self._comet_queues)
-    web_log_handler = logging.StreamHandler(self.web_log_stream)
-    web_log_handler.setLevel(logging.INFO)
-    formatter = logging.Formatter(FORMAT, datefmt=DATE_FORMAT)
-    web_log_handler.setFormatter(formatter)
-    logging.getLogger('').addHandler(web_log_handler)
 
   def GET_(self, handler):
     """Render main UI."""
-    handler.Render(open('templates/index.html').read(), locals())
+    handler.Render(open('static/index.html').read(), locals())
 
   def GET_favicon_ico(self, handler):
     """Ignore requets for favico.ico."""
     pass
-
-  def GetCometQueue(self, handler):
-    with self._lock:
-      client_addr = handler.client_address[0]
-      if client_addr not in self._comet_queues:
-        self._comet_queues[client_addr] = Queue.Queue()
-        logging.info('New client %s.' % client_addr)
-    return self._comet_queues[client_addr]
-
-  def GET_comet(self, handler):
-    queue = self.GetCometQueue(handler)
-    try:
-      key, value = queue.get(timeout=60)
-    except Queue.Empty:
-      handler.Render('500 Error', response=500)
-    else:
-      handler.wfile.write(simplejson.dumps({'key': key, 'value': value}))
 
   def GET_forward(self, handler):
     """Drive forward in a straight line for 1 second."""
@@ -140,11 +91,11 @@ class FidoWeb(gsd.App):
     """Return a JSON object with various sensor data."""
     handler.wfile.write(simplejson.dumps(self._fido.sensors.data))
 
-
-  def GET_speak(self, handler, msgs=None):
-    """Use flite to do text to speech."""
-    self._fido.olpc.Speak(msgs[0])
-
+  def GET_webbytes(self,handler,bytes=None):
+    #logging.info('Rawbytes %s.' % bytes)
+    moveitstr = bytes[0]
+    moveit = map( int, moveitstr.split(',') )
+    self._fido.Rawbytes(moveit)
 
 def main():
   robot_tty = '/dev/ttyUSB0'
