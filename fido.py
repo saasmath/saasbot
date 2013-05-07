@@ -31,8 +31,6 @@ import sys
 import threading
 import time
 import pyrobot
-import arduino_controller
-import olpc_controller
 import random
 
 SENSOR_DELAY = 0.05
@@ -50,40 +48,24 @@ class Fido(object):
 
   """Fido is a telepresence robot."""
 
-  def __init__(self, arduino_tty='/dev/ttyUSB0', robot_tty='/dev/ttyUSB1'):
-    self.arduino = arduino_controller.ArduinoController(arduino_tty)
+  def __init__(self, robot_tty='/dev/ttyUSB0'):
     self.robot = pyrobot.Create(robot_tty)
     self.robot.safe = False  # Use full mode for control.
-    self.olpc = olpc_controller.OlpcController()
     # Add Fido services.
     self.sensors = FidoSensors(self)
-    self.power_manager = FidoPowerManager(self)
 
   def StartServices(self):
     logging.info('Starting up Fido services.')
     self.sensors.Start()
     time.sleep(5)  # Give the sensors a chance to update.
-    self.power_manager.Start()
 
   def StartRobot(self):
     logging.info('Starting up the robot.')
-    self.arduino.PowerOlpc(False)
-    self.arduino.PowerRobot(True)
     self.robot.SoftReset()
     self.robot.Control()
-    if not self.arduino.CheckPower():
-      logging.warn('Failed to start robot. Retrying.')
-      self.StartRobot()
-
-  def StartOlpc(self):
-    logging.info('Starting up the OLPC.')
-    self.olpc.SetDconSleep(True)
-    self.olpc.ConfigureAudio()
-    #self.olpc.StreamAudio('10.171.236.100', 8000)
 
   def Start(self):
     """Start controlling the robot."""
-    self.StartOlpc()
     self.StartRobot()
     self.StartServices()
 
@@ -251,43 +233,23 @@ class FidoService(object):
       time.sleep(0.01)
 
 
-class FidoPowerManager(FidoService):
-
-  """Connects the OLPC power when charging sources are available."""
-
-  def Loop(self):
-    """Connect the OLPC power to the robot if a charging source is available."""
-    if 'charging-sources-available' not in self.fido.sensors:
-      logging.info('Invalid sensor data.')
-    elif self.fido.sensors['charging-sources-available']:
-      logging.info('Charging source available.')
-      if self.fido.sensors['charging-state'] == 'not-charging':
-        self.fido.robot.SoftReset()  # Robot won't charge until we reset it.
-      self.fido.arduino.PowerOlpc(True)
-    else:
-      # No charging sources available.
-      self.fido.arduino.PowerOlpc(False)
-    self.Delay(POWER_MANAGER_DELAY)
-
 
 class FidoSensors(FidoService):
 
-  """Periodically updates sensor data from the OLPC and the robot."""
+  """Periodically updates sensor data from the robot."""
 
   def __init__(self, fido):
     super(FidoSensors, self).__init__(fido)
     self.data = {}
 
   def Loop(self):
-    """Get sensor data from robot and OLPC."""
-    self.fido.olpc.sensors.GetAll()
+    """Get sensor data from robot"""
     try:
       self.fido.robot.sensors.GetAll()
     except pyrobot.PyRobotError, e:
       logging.warn(e)
     else:
       self.data.update(self.fido.robot.sensors.data)
-      self.data.update(self.fido.olpc.sensors.data)
     self.Delay(SENSOR_DELAY)
 
   def __getitem__(self, name):
