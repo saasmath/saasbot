@@ -652,31 +652,71 @@ class Create:
         #self.send( chr(leftLowVal) )
         return
 
+    def average_velocity( self ):
+        left_velocity = self.getSensor('LEFT_VELOCITY')
+        right_velocity = self.getSensor('RIGHT_VELOCITY')
+        return ((left_velocity+right_velocity)/2)
+        
+
+
+
+
     def accelerate( self ):
         velocity = self.getSensor('VELOCITY')
         left_velocity = self.getSensor('LEFT_VELOCITY')
         right_velocity = self.getSensor('RIGHT_VELOCITY')
         self.driveDirect(left_velocity + 30,right_velocity + 30)
-        return left_velocity
+        left_velocity = self.getSensor('LEFT_VELOCITY')
+        right_velocity = self.getSensor('RIGHT_VELOCITY')
+        return ((left_velocity+right_velocity)/2)
 
     def decelerate( self ):
         left_velocity = self.getSensor('LEFT_VELOCITY')
         right_velocity = self.getSensor('RIGHT_VELOCITY')
         self.driveDirect(left_velocity - 30,right_velocity - 30)
-        return left_velocity
+        left_velocity = self.getSensor('LEFT_VELOCITY')
+        right_velocity = self.getSensor('RIGHT_VELOCITY')
+        return ((left_velocity+right_velocity)/2)
 
     def goright( self ):
         left_velocity = self.getSensor('LEFT_VELOCITY')
         right_velocity = self.getSensor('RIGHT_VELOCITY')
         self.driveDirect(left_velocity + 30,right_velocity - 30)
-        return left_velocity
+        left_velocity = self.getSensor('LEFT_VELOCITY')
+        right_velocity = self.getSensor('RIGHT_VELOCITY')
+        return ((left_velocity+right_velocity)/2)
 
     def goleft( self ):
         left_velocity = self.getSensor('LEFT_VELOCITY')
         right_velocity = self.getSensor('RIGHT_VELOCITY')
         self.driveDirect(left_velocity - 30,right_velocity + 30)
-        return left_velocity
+        left_velocity = self.getSensor('LEFT_VELOCITY')
+        right_velocity = self.getSensor('RIGHT_VELOCITY')
+        return ((left_velocity+right_velocity)/2)
+
+    def brake( self ):
+        left_velocity = self.getSensor('LEFT_VELOCITY')
+        right_velocity = self.getSensor('RIGHT_VELOCITY')
+        if (left_velocity>25):
+            left_velocity=left_velocity-30
+        if (left_velocity<-25):
+            left_velocity=left_velocity+30
+        if (abs(left_velocity)<30):
+            left_velocity=0
+        if (right_velocity>25):
+            right_velocity=right_velocity-30
+        if (right_velocity<-25):
+            right_velocity=right_velocity+30
+        if (abs(right_velocity)<30):
+            right_velocity=0
+        self.driveDirect(left_velocity,right_velocity)
+        left_velocity = self.getSensor('LEFT_VELOCITY')
+        right_velocity = self.getSensor('RIGHT_VELOCITY')
+        return ((left_velocity+right_velocity)/2)
+
+
         
+
     def waitTime(self,seconds):
         """ robot waits for the specified time to past (tenths of secs) before executing the next command (CAB)"""
         timeVal= twosComplementInt1byte(int(seconds))

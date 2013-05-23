@@ -30,7 +30,7 @@ class CreateWeb(gsd.App):
 
   def GET_(self, handler):
     """Render main UI."""
-    handler.Render(open('static/garybot9.html').read(), locals())
+    handler.Render(open('static/index.html').read(), locals())
 
   def GET_favicon_ico(self, handler):
     """Ignore requets for favico.ico."""
@@ -53,11 +53,11 @@ class CreateWeb(gsd.App):
 
   def GET_goleft(self, handler):
     """Turn in place to the right."""
-    self._create.goleft()
+    handler.wfile.write(self._create.goleft())
 
   def GET_goright(self, handler):
     """Turn in place to the right."""
-    self._create.goright()
+    handler.wfile.write(self._create.goright())
 
   def GET_stop(self, handler):
     """Turn in place to the right."""
@@ -66,6 +66,10 @@ class CreateWeb(gsd.App):
   def GET_accelerate(self, handler):
     """Turn in place to the right."""
     handler.wfile.write(self._create.accelerate())
+
+  def GET_brake(self, handler):
+    """Turn in place to the right."""
+    handler.wfile.write(self._create.brake())
 
   def GET_decelerate(self, handler):
     """Turn in place to the right."""
