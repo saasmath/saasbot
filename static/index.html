@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>saasbot controller</title>
+        <title>Sensors</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="http://saasmath.seattleacademy.org/css/bootstrap.css"
               rel="stylesheet">
@@ -9,6 +9,7 @@
 
         </style>
         <script src="http://saasmath.seattleacademy.org/js/jquery.js"></script>
+        <script src="static/keyboard.js"></script>
 
 
         <script>
@@ -17,48 +18,47 @@
 
             $(document).ready(function() {
 
-                $('body').keydown(function(event) {
-                    console.log(event.which);
+                $("#getAllSensors").click(function() {
+                    //alert('first');
+                    $("[data-sensor]").each(function() {
+                        sensor = $(this).data('sensor');
+                        $(this).load('getSensor?sensorToRead=' + sensor);
+                    });
 
-                    if (event.which === 87)
-                    {
-                        $('#result').load('/webbytes?bytes=145,0,50,0,50');
-                    }
-                    else if (event.which === 83)
-                    {
-                        //    $('#result').load('/reverse');
-                        $('#result').load('/webbytes?bytes=145,255,206,255,206');
-                    }
-                    else if (event.which === 65)
-                    {
-                        $('#result').load('/webbytes?bytes=145,0,50,255,206');
-                    }
-                    else if (event.which === 68)
-                    {
-                        $('#result').load('/webbytes?bytes=145,255,206,0,50');
-                    }
-                    else if (event.which === 32)
-                    {
-                        $('#result').load('/webbytes?bytes=145,0,0,0,0');
-                    }
-
-                    else if (event.which === 38)
-                    {
-                        $('#result').load('/accelerate');
-                    }
-                    else if (event.which === 40)
-                    {
-                        $('#result').load('/decelerate');
-                    }
-                    else if (event.which === 37)
-                    {
-                        $('#result').load('/goleft');
-                    }
-                    else if (event.which === 39)
-                    {
-                        $('#result').load('/goright');
-                    }
                 });
+
+                $("#getPowerSensors").click(function() {
+                    //alert('first');
+                    $("#power-sensors [data-sensor]").each(function() {
+                        sensor = $(this).data('sensor');
+                        $(this).load('getSensor?sensorToRead=' + sensor);
+                    });
+
+                });
+
+                $("#getObstacleSensors").click(function() {
+                    //alert('first');
+                    $("#obstacle-sensors [data-sensor]").each(function() {
+                        sensor = $(this).data('sensor');
+                        $(this).load('getSensor?sensorToRead=' + sensor);
+                    });
+
+                });
+
+                $("#getOdometrySensors").click(function() {
+                    //alert('first');
+                    $("#odometry-sensors [data-sensor]").each(function() {
+                        sensor = $(this).data('sensor');
+                        $(this).load('getSensor?sensorToRead=' + sensor);
+                    });
+
+                });
+
+
+
+
+
+
 
                 $("[data-command]").click(function() {
                     command = $(this).data('command');
@@ -68,10 +68,28 @@
 
                 $("[data-sensor]").click(function() {
                     sensor = $(this).data('sensor');
-                    $('#result').load('getSensor?sensorToRead=' + sensor);
+                    $(this).load('getSensor?sensorToRead=' + sensor);
 
                 });
 
+                function updatePower() {
+                    $("#power-sensors [data-sensor]").each(function() {
+                        sensor = $(this).data('sensor');
+                        $(this).load('getSensor?sensorToRead=' + sensor);
+                    });
+                }
+                //var powerId = setInterval(updatePower, 2000);
+
+                function updateOdometry() {
+                    $("#odometry-sensors [data-sensor]").each(function() {
+                        sensor = $(this).data('sensor');
+                        $(this).load('getSensor?sensorToRead=' + sensor);
+                    });
+                }
+
+                updatePower();
+                updateOdometry();
+                var OdometryId = setInterval(updatePower, 1000);
 
             });
 
@@ -81,35 +99,214 @@
     <body>
         <div class="container">
             <div id="result">result</div>
-            <button data-command="/brake">brake</button>
-            <button data-command="/left">left</button>
             <button data-command="/toPassiveMode">toPassiveMode</button>
             <button data-command="/toSafeMode">toSaveMode</button>
             <button data-command="/toFullMode">toFullMode</button>
-            <button data-command="/right">right</button>
-            <button data-command="/webbytes?bytes=137,0,0,128,0">stop</button>
-            <button data-command="/webbytes?bytes=137,0,8,128,0">forward slow</button>
-            <button data-command="/song">song</button>
-            <button data-sensor="VELOCITY">VELOCITY</button>
-            <button data-sensor="RIGHT_VELOCITY">RIGHT_VELOCITY</button>
-            <button data-sensor="LEFT_VELOCITY">LEFT_VELOCITY</button>
-            <button data-sensor="BUMPS_AND_WHEEL_DROPS">BUMPS_AND_WHEEL_DROPS</button>
-            <button data-sensor="WALL">WALL</button>
-            <button data-sensor="RADIUS">RADIUS</button>
-            <button data-sensor="CLIFF_LEFT">CLIFF_LEFT</button>
-            <button data-sensor="CLIFF_FRONT_LEFT">CLIFF_FRONT_LEFT</button>
-            <button data-sensor="CLIFF_FRONT_RIGHT">CLIFF_FRONT_RIGHT</button>
-            <button data-sensor="CLIFF_RIGHT">CLIFF_RIGHT</button>
-            <button data-sensor="BUTTONS">BUTTONS</button>
-            <button data-sensor="DISTANCE">DISTANCE</button>
-            <button data-sensor="ANGLE">ANGLE</button>
-            <button data-sensor="CHARGING_STATE">CHARGING_STATE</button>
-            <button data-sensor="VOLTAGE">VOLTAGE</button>
+            <button id="getAllSensors">Get all sensors</button>
+            <button id="getPowerSensors">Get power sensors</button>
+            <button id="getOdometrySensors">Get odometry sensors</button>
+            <button id="getObstacleSensors">Get obstacle sensors</button>
 
-            <div id="VELOCITY">VELOCITY2</div>
-            <div id="RIGHT_VELOCITY">RIGHT_VELOCITY</div>
-            <div id="LEFT_VELOCITY">LEFT_VELOCITY</div>
+            <div class="row">
+                <div class="span6">
+                    <table class="table table-striped" id="power-sensors">
+                        <caption>Power</caption>
+                        <thead>
+                            <tr>
+                                <th>Sensor</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
+                            <tr>
+                                <td>VOLTAGE</td>
+                                <td data-sensor="VOLTAGE"></td>
+                            </tr>
+                            <tr>
+                                <td>CURRENT</td>
+                                <td data-sensor="CURRENT"></td>
+                            </tr>
+                            <tr>
+                                <td>BATTERY_TEMPERATURE</td>
+                                <td data-sensor="BATTERY_TEMPERATURE"></td>
+                            </tr>                    
+                            <tr>
+                                <td>BATTERY_CHARGE</td>
+                                <td data-sensor="BATTERY_CHARGE"></td>
+                            </tr>
+                            <tr>
+                                <td>BATTERY_CAPACITY</td>
+                                <td data-sensor="BATTERY_CAPACITY"></td>
+                            </tr>
+                            <tr>
+                                <td>CHARGING_STATE</td>
+                                <td data-sensor="CHARGING_STATE"></td>
+                            </tr>
+                            <tr>
+                                <td>CHARGING_SOURCES_AVAILABLE</td>
+                                <td data-sensor="CHARGING_SOURCES_AVAILABLE"></td>
+                            </tr>
+
+                            <tr>
+                                <td>OI_MODE</td>
+                                <td data-sensor="OI_MODE"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>               
+                <div class="span6">
+                    <table class="table table-striped" id="odometry-sensors">
+                        <caption>Odometry</caption>
+                        <thead>
+                            <tr>
+                                <th>Sensor</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>DISTANCE</td>
+                                <td data-sensor="DISTANCE"></td>
+                            </tr>
+                            <tr>
+                                <td>ANGLE</td>
+                                <td data-sensor="ANGLE"></td>
+                            </tr>
+                            <tr>
+                                <td>VELOCITY</td>
+                                <td data-sensor="VELOCITY"></td>
+                            </tr>
+                            <tr>
+                                <td>RADIUS</td>
+                                <td data-sensor="RADIUS"></td>
+                            </tr>
+                            <tr>
+                                <td>RIGHT_VELOCITY</td>
+                                <td data-sensor="RIGHT_VELOCITY"></td>
+                            </tr>
+                            <tr>
+                                <td>LEFT_VELOCITY</td>
+                                <td data-sensor="LEFT_VELOCITY"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="span6">
+                    <table class="table table-striped" id="obstacle-sensors">
+                        <caption>Obstacles</caption>
+                        <thead>
+                            <tr>
+                                <th>Sensor</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>BUMPS_AND_WHEEL_DROPS</td>
+                                <td data-sensor="BUMPS_AND_WHEEL_DROPS"></td>
+                            </tr>
+
+                            <tr>
+                                <td>CLIFF_LEFT</td>
+                                <td data-sensor="CLIFF_LEFT"></td>
+                            </tr>
+                            <tr>
+                                <td>CLIFF_FRONT_LEFT</td>
+                                <td data-sensor="CLIFF_FRONT_LEFT"></td>
+                            </tr>
+                            <tr>
+                                <td>CLIFF_FRONT_RIGHT</td>
+                                <td data-sensor="CLIFF_FRONT_RIGHT"></td>
+                            </tr>
+                            <tr>
+                                <td>CLIFF_RIGHT</td>
+                                <td data-sensor="CLIFF_RIGHT"></td>
+                            </tr>
+                            <tr>
+                                <td>WALL</td>
+                                <td data-sensor="WALL"></td>
+                            </tr>
+                            <tr>
+                                <td>VIRTUAL_WALL</td>
+                                <td data-sensor="VIRTUAL_WALL"></td>
+                            </tr>
+
+                            <tr>
+                                <td>CLIFF_LEFT_SIGNAL</td>
+                                <td data-sensor="CLIFF_LEFT_SIGNAL"></td>
+                            </tr>
+                            <tr>
+                                <td>CLIFF_FRONT_LEFT_SIGNAL</td>
+                                <td data-sensor="CLIFF_FRONT_LEFT_SIGNAL"></td>
+                            </tr>
+                            <tr>
+                                <td>CLIFF_FRONT_RIGHT_SIGNAL</td>
+                                <td data-sensor="CLIFF_FRONT_RIGHT_SIGNAL"></td>
+                            </tr>
+                            <tr>
+                                <td>CLIFF_RIGHT_SIGNAL</td>
+                                <td data-sensor="CLIFF_RIGHT_SIGNAL"></td>
+                            </tr>
+                            <tr>
+                                <td>WALL_SIGNAL</td>
+                                <td data-sensor="WALL_SIGNAL"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="span6">
+                    <table class="table table-striped">
+                        <caption>Other</caption>
+                        <thead>
+                            <tr>
+                                <th>Sensor</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td>OVERCURRENTS</td>
+                                <td data-sensor="OVERCURRENTS"></td>
+                            </tr>
+                            <tr>
+                                <td>IR_BYTE</td>
+                                <td data-sensor="IR_BYTE"></td>
+                            </tr>
+                            <tr>
+                                <td>BUTTONS</td>
+                                <td data-sensor="BUTTONS"></td>
+                            </tr>
+
+                            <tr>
+                                <td>USER_DIGITAL_INPUTS</td>
+                                <td data-sensor="USER_DIGITAL_INPUTS"></td>
+                            </tr>
+                            <tr>
+                                <td>SONG_NUMBER</td>
+                                <td data-sensor="SONG_NUMBER"></td>
+                            </tr>
+                            <tr>
+                                <td>SONG_PLAYING</td>
+                                <td data-sensor="SONG_PLAYING"></td>
+                            </tr>
+                            <tr>
+                                <td>NUMBER_OF_STREAM_PACKETS</td>
+                                <td data-sensor="NUMBER_OF_STREAM_PACKETS"></td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div> <!-- /container -->
     </body>
 </html>

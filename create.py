@@ -158,7 +158,7 @@ SENSORS = {
 "VOLTAGE":SensorModule(chr(22),"TWO_BYTE_UNSIGNED",2),
 "CURRENT":SensorModule(chr(23),"TWO_BYTE_SIGNED",2),
 "BATTERY_TEMPERATURE":SensorModule(chr(24),"ONE_BYTE_SIGNED",1),
-"BATTERY_CHARGE":SensorModule(chr(25),"TWO_BYTE_UNSIGNED",2),
+"BATTERY_CHARGE":SensorModule(chr(25),"TWO_BYTE_SIGNED",2),
 "BATTERY_CAPACITY":SensorModule(chr(26),"TWO_BYTE_UNSIGNED",2),
 "WALL_SIGNAL":SensorModule(chr(27),"TWO_BYTE_UNSIGNED",2),
 "CLIFF_LEFT_SIGNAL":SensorModule(chr(28),"TWO_BYTE_UNSIGNED",2),
@@ -328,7 +328,10 @@ class Create:
             else:
                 # for Mac/Linux - use whole port name
                 # print 'In Mac/Linux mode...'
-                self.ser = serial.Serial(PORT, baudrate=57600, timeout=0.5)
+                try: 
+                    self.ser = serial.Serial(PORT, baudrate=57600, timeout=0.5)
+                except serial.SerialException:  #Try Turtlecore port
+                    self.ser = serial.Serial('/dev/ttyO0', baudrate=57600, timeout=0.5)
         # otherwise, we try to open the numeric serial port...
                 if (sim_mode):
                     self.init_sim_mode()
@@ -345,7 +348,7 @@ class Create:
         if self.in_sim_mode:
             print("In simulator mode")
         elif self.ser.isOpen():
-            print('Serial port did open on iRobot Create...')
+            print('Serial port opened on iRobot Create...')
         else:
             print('Serial port did NOT open, check the')
             print('  - port number')
@@ -369,6 +372,13 @@ class Create:
             self.toFullMode()
             
         self.serialLock = thread.allocate_lock()
+
+        self.totalDistance = 0
+        self.totalAngle = 0
+        self.lastSpeedChange = time.time()
+        self.lastTurnChange = time.time()
+
+
 
         #self.setLEDs(80,255,0,0) # MB: was 100, want more yellowish        
 
@@ -883,12 +893,21 @@ class Create:
                 data = self._getButtonBits(raw_data[0])
             elif sensorToRead == "USER_DIGITAL_INPUTS":
                 data = self._getLower5Bits(raw_data[0])
-            if sensorToRead == "OVERCURRENTS":
+            elif sensorToRead == "OVERCURRENTS":
                 data = self._getLower5Bits(raw_data[0])
         elif interpret == "NO_HANDLING":
             data = raw_data
 
+        if sensorToRead == "DISTANCE":
+            self.totalDistance = self.totalDistance + data
+            data = self.totalDistance
+
+        if sensorToRead == "ANGLE":
+            self.totalAngle = self.totalAngle + data
+            data = self.totalAngle
+
         return data
+
 
     def sensors(self):
         return 'sensor output'

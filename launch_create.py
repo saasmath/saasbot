@@ -32,24 +32,28 @@ class CreateWeb(gsd.App):
     """Render main UI."""
     handler.Render(open('static/index.html').read(), locals())
 
+  def GET_abc(self, handler):
+    """Render main UI."""
+    handler.Render(open('static/sensors.html').read(), locals())
+
   def GET_favicon_ico(self, handler):
     """Ignore requets for favico.ico."""
     pass
 
   def GET_forward(self, handler):
-    self._create.forward()
+    handler.wfile.write(self._create.forward())
 
   def GET_reverse(self, handler):
     """Drive backward in a straight line for 1 second."""
-    self._create.reverse()
+    handler.wfile.write(self._create.reverse())
 
   def GET_left(self, handler):
     """Turn in place to the left."""
-    self._create.left()
+    handler.wfile.write(self._create.left())
 
   def GET_right(self, handler):
     """Turn in place to the right."""
-    self._create.right()
+    handler.wfile.write(self._create.right())
 
   def GET_goleft(self, handler):
     """Turn in place to the right."""
@@ -61,7 +65,7 @@ class CreateWeb(gsd.App):
 
   def GET_stop(self, handler):
     """Turn in place to the right."""
-    self._create.stop()
+    handler.wfile.write(self._create.stop())
 
   def GET_accelerate(self, handler):
     """Turn in place to the right."""
@@ -77,15 +81,15 @@ class CreateWeb(gsd.App):
 
   def GET_toPassiveMode(self, handler):
     """To Passive Mode"""
-    self._create.toPassiveMode()
+    handler.wfile.write(self._create.toPassiveMode())
 
   def GET_toSafeMode(self, handler):
     """To Passive Mode"""
-    self._create.toSafeMode()
+    handler.wfile.write(self._create.toSafeMode())
 
   def GET_toFullMode(self, handler):
     """To Passive Mode"""
-    self._create.toFullMode()
+    handler.wfile.write(self._create.toFullMode())
 
   def GET_drive(self,handler,velocity=['0'],radius=['32768']):
     self._create.drive(velocity[0],radius[0])
@@ -99,13 +103,13 @@ class CreateWeb(gsd.App):
     #logging.info('Rawbytes %s.' % bytes)
     moveitstr = bytes[0]
     moveit = map( int, moveitstr.split(',') )
-    self._create._rawSend(moveit)
+    handler.wfile.write(self._create._rawSend(moveit))
 
   def GET__rawSend(self,handler,bytes=None):
     #logging.info('Rawbytes %s.' % bytes)
     moveitstr = bytes[0]
     moveit = map(int, moveitstr.split(',') )
-    self._create._rawSend(moveit)
+    handler.wfile.write(self._create._rawSend(moveit))
 
   def GET_getSensor(self,handler,sensorToRead):
     sensor = sensorToRead[0]
