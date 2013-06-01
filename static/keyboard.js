@@ -27,7 +27,8 @@ $(document).ready(function() {
         }
         else if (event.which === 32) //space bar
         {
-            $('#result').load('/webbytes?bytes=145,0,0,0,0');
+            //$('#result').load('/webbytes?bytes=145,0,0,0,0');
+            $('#result').load('stop');
             event.preventDefault();
         }
         else if (event.which === 66) //b

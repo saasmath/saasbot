@@ -89,7 +89,8 @@
 
                 updatePower();
                 updateOdometry();
-                var OdometryId = setInterval(updatePower, 1000);
+                var powerId = setInterval(updatePower, 1200);
+                var odometryId = setInterval(updateOdometry, 1000);
 
             });
 
@@ -102,6 +103,7 @@
             <button data-command="/toPassiveMode">toPassiveMode</button>
             <button data-command="/toSafeMode">toSaveMode</button>
             <button data-command="/toFullMode">toFullMode</button>
+
             <button id="getAllSensors">Get all sensors</button>
             <button id="getPowerSensors">Get power sensors</button>
             <button id="getOdometrySensors">Get odometry sensors</button>

@@ -584,9 +584,11 @@ class Create:
 
         
 #========================= Moving Around ================================================    
-    def stop(self):
-        """ stop calls go(0,0) """
-        self.go(0,0)
+    def stop(self, brakeIfGreater = 50):
+        while abs(self.getSensor('LEFT_VELOCITY')) > brakeIfGreater or abs(self.getSensor('RIGHT_VELOCITY')) > brakeIfGreater:
+            self.brake()
+            time.sleep(.05)
+        self.driveDirect(0,0)
 
     def right(self):
         self.go(-20,20)
@@ -707,17 +709,17 @@ class Create:
     def brake( self ):
         left_velocity = self.getSensor('LEFT_VELOCITY')
         right_velocity = self.getSensor('RIGHT_VELOCITY')
-        if (left_velocity>25):
-            left_velocity=left_velocity-30
-        if (left_velocity<-25):
-            left_velocity=left_velocity+30
-        if (abs(left_velocity)<30):
+        if (left_velocity>45):
+            left_velocity=left_velocity-50
+        if (left_velocity<-45):
+            left_velocity=left_velocity+50
+        if (abs(left_velocity)<45):
             left_velocity=0
-        if (right_velocity>25):
-            right_velocity=right_velocity-30
-        if (right_velocity<-25):
-            right_velocity=right_velocity+30
-        if (abs(right_velocity)<30):
+        if (right_velocity>45):
+            right_velocity=right_velocity-50
+        if (right_velocity<-45):
+            right_velocity=right_velocity+50
+        if (abs(right_velocity)<50):
             right_velocity=0
         self.driveDirect(left_velocity,right_velocity)
         left_velocity = self.getSensor('LEFT_VELOCITY')
