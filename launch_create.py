@@ -16,6 +16,7 @@ import Queue
 import threading
 import urllib2
 import time
+import camera
 
 FORMAT = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s'
 DATE_FORMAT = '%H%M%S'
@@ -27,6 +28,8 @@ class CreateWeb(gsd.App):
   def __init__(self):
     self._create = create.Create()
     self._lock = threading.Lock()
+ #   cam = camera.Camera('static/webcam.png')
+ #   cam.StartWebcam()
 
   def GET_(self, handler):
     """Render main UI."""
