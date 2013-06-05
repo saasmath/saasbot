@@ -16,7 +16,7 @@ import Queue
 import threading
 import urllib2
 import time
-import camera
+# import camera  # camera causes errors currently on the gumstix
 
 FORMAT = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s'
 DATE_FORMAT = '%H%M%S'
