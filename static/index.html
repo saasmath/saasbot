@@ -87,10 +87,28 @@
                     });
                 }
 
+                function updateObstacle() {
+                    $("#obstacle-sensors [data-sensor]").each(function() {
+                        sensor = $(this).data('sensor');
+                        $(this).load('getSensor?sensorToRead=' + sensor);
+                    });
+                }
+
+                function updateOther() {
+                    $("#other-sensors [data-sensor]").each(function() {
+                        sensor = $(this).data('sensor');
+                        $(this).load('getSensor?sensorToRead=' + sensor);
+                    });
+                }
+
                 updatePower();
                 updateOdometry();
-                var powerId = setInterval(updatePower, 1200);
+                updateObstacle();
+                updateOther();
+                var powerId = setInterval(updatePower, 5000);
                 var odometryId = setInterval(updateOdometry, 1000);
+                var obsticalId = setInterval(updateObstacle, 4000);
+                var otherId = setInterval(updateOther, 6000);
 
             });
 
@@ -103,6 +121,9 @@
             <button data-command="/toPassiveMode">toPassiveMode</button>
             <button data-command="/toSafeMode">toSafeMode</button>
             <button data-command="/toFullMode">toFullMode</button>
+            <button data-command="/song1">song1</button>
+            <button data-command="/playNote?noteNumber=44&duration=89">playNote</button>
+
 
             <button id="getAllSensors">Get all sensors</button>
             <button id="getPowerSensors">Get power sensors</button>
@@ -264,7 +285,8 @@
                     </table>
                 </div>
                 <div class="span6">
-                    <table class="table table-striped">
+
+                    <table class="table table-striped" id="other-sensors">
                         <caption>Other</caption>
                         <thead>
                             <tr>

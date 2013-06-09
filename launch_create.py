@@ -118,6 +118,20 @@ class CreateWeb(gsd.App):
     sensor = sensorToRead[0]
     handler.wfile.write(self._create.getSensor(sensor))
 
+  def GET_playNote(self,handler,noteNumber,duration):
+    """ Play a single note
+    Format:  /playNote?noteNumber=44&duration=89
+    """
+    handler.wfile.write(self._create.playNote(int(noteNumber[0]),int(duration[0])))
+
+  def GET_song1(self,handler):
+    """Format (note,duration).  Note between 30 and 133 
+    duration between 4 and 255 in 1/64th of milliseconds
+    song is truncated at 128 notes
+    """
+
+    handler.wfile.write(self._create.playSong([(60,8),(64,8),(67,8),(72,8)]))
+
 def main():
 
   logging.basicConfig(level=logging.INFO, format=FORMAT, datefmt=DATE_FORMAT)

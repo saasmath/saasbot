@@ -1053,10 +1053,10 @@ class Create:
         self.send( SONG )
         self.send( chr(songNumber) )
         
-        L = min(len(noteList), 16)
+        L = min(len(noteList), 128)
         self.send( chr(L) )
         
-        # loop through the notes, up to 16
+        # loop through the notes, up to 128
         for note in noteList[:L]:
             # make sure its a tuple, or else we rest for 1/4 second
             if type(note) == type( () ):
@@ -1074,6 +1074,10 @@ class Create:
             of pairs of ( note_number, note_duration ) format. Thus, 
             r.playSong( [(60,8),(64,8),(67,8),(72,8)] ) plays a quick C chord.
         """
+
+        while self.getSensor('SONG_PLAYING') > 0:
+            time.sleep(.1)
+
         # implemented by setting song #1 to the notes and then playing it
         self.setSong(1, noteList)
         self.playSongNumber(1)
