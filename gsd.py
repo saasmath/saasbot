@@ -47,7 +47,10 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     self.end_headers()
 
   def _SendStaticFile(self, path):
-    self._SendHeaders()
+    if path.endswith('.png'):
+        self._SendHeaders(200,'Content-type','image/png')
+    else:
+        self._SendHeaders()
     self.wfile.write(open(path.replace('/', os.sep), 'rb').read())
 
   def do_HEAD(self):
@@ -59,7 +62,8 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
   def do_GET(self):
     if self.path.startswith('/static'):
-      return self._SendStaticFile(self.path[1:])
+      path, qs = (self.path.split('?', 1) + [''])[:2]
+      return self._SendStaticFile(path[1:])
     path, qs = (self.path.split('?', 1) + [''])[:2]
     path = path.replace('/', '_').replace('.', '_')
     try:

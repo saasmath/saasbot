@@ -54,6 +54,14 @@
 
                 });
 
+                $("#getwebcam").click(function() {
+
+                    d = new Date();
+                    $("#webcam").attr("src", "static/webcam.png?" + d.getTime());
+                });
+
+
+
 
 
 
@@ -126,10 +134,11 @@
 
 
             <button id="getAllSensors">Get all sensors</button>
+            <button id="getwebcam">getwebcam</button>
             <button id="getPowerSensors">Get power sensors</button>
             <button id="getOdometrySensors">Get odometry sensors</button>
             <button id="getObstacleSensors">Get obstacle sensors</button>
-
+            <div><image id='webcam' src =''></div>
             <div class="row">
                 <div class="span6">
                     <table class="table table-striped" id="power-sensors">
@@ -325,7 +334,6 @@
                                 <td>NUMBER_OF_STREAM_PACKETS</td>
                                 <td data-sensor="NUMBER_OF_STREAM_PACKETS"></td>
                             </tr>
-
 
                         </tbody>
                     </table>

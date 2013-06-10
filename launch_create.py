@@ -16,7 +16,6 @@ import Queue
 import threading
 import urllib2
 import time
-# import camera  # camera causes errors currently on the gumstix
 
 FORMAT = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s'
 DATE_FORMAT = '%H%M%S'
@@ -28,12 +27,24 @@ class CreateWeb(gsd.App):
   def __init__(self):
     self._create = create.Create()
     self._lock = threading.Lock()
- #   cam = camera.Camera('static/webcam.png')
- #   cam.StartWebcam()
+    self.startCamera()
+
+  def startCamera(self):
+    try:
+        import camera  # camera causes errors currently on the gumstix
+        cam = camera.Camera('static/webcam.png')
+        cam.StartWebcam()
+    except:
+        print "failed to load webcam"    
+  
 
   def GET_(self, handler):
     """Render main UI."""
     handler.Render(open('static/index.html').read(), locals())
+
+  def GET_camera(self, handler):
+    """Render main UI."""
+    handler.Renderpng(open('static/webcam.png').read())
 
   def GET_abc(self, handler):
     """Render main UI."""
