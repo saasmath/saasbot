@@ -27,7 +27,7 @@ class CreateWeb(gsd.App):
   def __init__(self):
     self._create = create.Create()
     self._lock = threading.Lock()
-    self.startCamera()
+    #self.startCamera()
 
   def startCamera(self):
     try:
