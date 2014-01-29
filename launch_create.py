@@ -2,7 +2,7 @@
 
 # MIT License
 #
-# Copyright (c) 2013 Gary Anderson
+# Copyright (c) 2013,2014 Gary Anderson
 
 __author__ = "ganderson@seattleacademy.org (Gary Anderson)"
 
@@ -108,6 +108,10 @@ class CreateWeb(gsd.App):
   def GET_drive(self,handler,velocity=['0'],radius=['32768']):
     self._create.drive(velocity[0],radius[0])
     handler.wfile.write(radius[0])
+
+  def GET_driveDirect(self,handler,left=['0'],right=['0']):
+    self._create.driveDirect(left[0],right[0])
+    handler.wfile.write(left[0] + ',' + right[0])
 
   def GET_sensors(self, handler):
     """Return a JSON object with various sensor data."""

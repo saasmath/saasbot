@@ -11,10 +11,7 @@
         <script src="http://saasmath.seattleacademy.org/js/jquery.js"></script>
         <script src="static/keyboard.js"></script>
 
-
         <script>
-
-
 
             $(document).ready(function() {
 
@@ -54,24 +51,10 @@
 
                 });
 
-                $("#getwebcam").click(function() {
-
-                    d = new Date();
-                    $("#webcam").attr("src", "static/webcam.png?" + d.getTime());
-                });
-
-
-
-
-
-
-
-
 
                 $("[data-command]").click(function() {
                     command = $(this).data('command');
                     $('#result').load(command);
-
                 });
 
                 $("[data-sensor]").click(function() {
@@ -86,7 +69,6 @@
                         $(this).load('getSensor?sensorToRead=' + sensor);
                     });
                 }
-                //var powerId = setInterval(updatePower, 2000);
 
                 function updateOdometry() {
                     $("#odometry-sensors [data-sensor]").each(function() {
@@ -113,10 +95,10 @@
                 updateOdometry();
                 updateObstacle();
                 updateOther();
-                var powerId = setInterval(updatePower, 5000);
-                var odometryId = setInterval(updateOdometry, 1000);
-                var obsticalId = setInterval(updateObstacle, 4000);
-                var otherId = setInterval(updateOther, 6000);
+                //var powerId = setInterval(updatePower, 5000);
+                //var odometryId = setInterval(updateOdometry, 1000);
+                //var obsticalId = setInterval(updateObstacle, 4000);
+                //var otherId = setInterval(updateOther, 6000);
 
             });
 
